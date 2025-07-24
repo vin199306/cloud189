@@ -63,9 +63,12 @@ func (up *Upload) encrypt(f url.Values) string {
 }
 
 // Decrypt 解密函数
-func (up *Upload) decrypt(encrypted string) url.Values {
+func (up *Upload) decrypt(encrypted string) string {
 	// 1. 将十六进制字符串转换为字节切片
-	data:= hex.DecodeString(encrypted)
+	data, err := hex.DecodeString(encrypted)
+	if err != nil {
+		return 0
+	}
 
 	// 2. 使用 AES 算法解密
 	decryptedData := util.DecryptAES([]byte(up.session.Secret[0:16]), string(data))
@@ -74,9 +77,12 @@ func (up *Upload) decrypt(encrypted string) url.Values {
 	decryptedStr := string(decryptedData)
 
 	// 4. 将字符串解析为 url.Values 类型
-	params:= url.ParseQuery(decryptedStr)
+	params, err := url.ParseQuery(decryptedStr)
+	if err != nil {
+		return 0
+	}
 
-	return params
+	return string(params)
 }
 
 func (up *Upload) do(req *http.Request, retry int, result any) error {
