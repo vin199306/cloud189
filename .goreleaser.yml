@@ -12,16 +12,8 @@ builds:
     binary: cloud189
     goos:
       - linux
-      - windows
     goarch:
-      - arm64
-      - amd64
-    goarm:
-      - 6
-      - 7
-    ignore:
-      - goos: windows
-        goarch: arm
+      - mipsle  # 添加 mipsle 平台支持
 
 archives:
   - format_overrides:
