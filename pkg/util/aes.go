@@ -21,6 +21,32 @@ func DecryptAES(key []byte, ct string) string {
 	}
 	return string(pt)
 }
+func AesDecrypt(key []byte,ciphertext) []byte {
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return nil
+	}
+	if block == nil {
+		return []byte{}
+	}
+	blockSize := block.BlockSize()
+	if len(ciphertext)%blockSize != 0 {
+		return nil
+	}
+	plaintext := make([]byte, len(ciphertext))
+	for bs, be := 0, blockSize; bs < len(ciphertext); bs, be = bs+blockSize, be+blockSize {
+		block.Decrypt(plaintext[bs:be], ciphertext[bs:be])
+	}
+	plaintext = PKCS7UnPadding(plaintext)
+	return plaintext
+}
+func PKCS7UnPadding(data []byte) []byte {
+	padding := data[len(data)-1]
+	if int(padding) > len(data) {
+		return nil
+	}
+	return data[:len(data)-int(padding)]
+}
 
 func AesEncrypt(data, key []byte) []byte {
 	block, err := aes.NewCipher(key)
