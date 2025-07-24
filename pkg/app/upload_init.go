@@ -64,6 +64,7 @@ func (up *Upload) encrypt(f url.Values) string {
 
 func (up *Upload) do(req *http.Request, retry int, result any) error {
 	resp, err := up.invoker.DoWithResp(req)
+	log.Printf("resp: %v", resp)
 	if err != nil {
 		return err
 	}
@@ -95,10 +96,11 @@ func (i *Upload) Get(path string, params url.Values, result any) error {
 	if err != nil {
 		return err
 	}
-	log.Printf("vals.Encode(): %v", vals.Encode())
+	
 	req.Header.Set("decodefields", "familyId,parentFolderId,fileName,fileMd5,fileSize,sliceMd5,sliceSize,albumId,extend,lazyCheck,isLog")
 	req.Header.Set("accept", "application/json;charset=UTF-8")
 	req.Header.Set("cache-control", "no-cache")
+	
 	return i.do(req, 0, result)
 }
 
@@ -151,9 +153,7 @@ func (c *Upload) init(i pkg.Upload) (*uploadInfo, error) {
     if err := c.Get(initMultiUploadURL, params, &upload); err != nil {
         log.Printf("Failed to call initMultiUpload: %v", err)
         return nil, err
-    }else{
-		log.Printf("initMultiUpload response: %v", upload)
-	}
+    }
 
     if upload.Data.UploadFileId == "" {
         log.Printf("Failed to call initMultiUpload: %v", upload.Data)
