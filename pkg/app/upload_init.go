@@ -95,6 +95,7 @@ func (i *Upload) Get(path string, params url.Values, result any) error {
 	if err != nil {
 		return err
 	}
+	log.Printf("vals.Encode(): %v", vals.Encode())
 	req.Header.Set("decodefields", "familyId,parentFolderId,fileName,fileMd5,fileSize,sliceMd5,sliceSize,albumId,extend,lazyCheck,isLog")
 	req.Header.Set("accept", "application/json;charset=UTF-8")
 	req.Header.Set("cache-control", "no-cache")
@@ -121,7 +122,7 @@ func (r *initResp) GetCode() string {
 	return r.Code
 }
 
-const initMultiUploadURL = "/person/initMultiUpload"
+const initMultiUploadURL = "/family/initMultiUpload"
 
 func (c *Upload) init(i pkg.Upload) (*uploadInfo, error) {
     // 检查关键参数的有效性
