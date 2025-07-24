@@ -119,7 +119,7 @@ func (i *Upload) Get(path string, params url.Values, result any) error {
 	if err != nil {
 		return err
 	}
-	log.Printf("decrypt: %v", i.decrypt('0a7b9bce3b3ba68f4169cf691e32155a7ffd6b5bd53fcd5694b0a34e7dcaa321850f0790f40c50cbe9bc8a851bc9b12eddca93a746ab7db803f0083a773c06c67d7972781b72ffd9fee73768d35671b4b7af13ffea043e27157e84206aa0aacf9e190f067ce6dbb8a66b57089d3488bc7b38af129b9e4d86e6678eab6484b03545c9ac0653741b9ad395c32293f5f07439fb797f7f1d015e56c03bfc3d256640041e72ba5ebb2ffdbfabb9301f444e45f41ee026cee2fb19c5d4d13429f4b5e28a356cc1a985068422d7667e28cfc6abe3668a9efa980033eb2657e70ab5281febb3b4a7fa52c1ab3cb4c7fd83a30a8a'))
+	log.Printf("decrypt: %v", i.decrypt("0a7b9bce3b3ba68f4169cf691e32155a7ffd6b5bd53fcd5694b0a34e7dcaa321850f0790f40c50cbe9bc8a851bc9b12eddca93a746ab7db803f0083a773c06c67d7972781b72ffd9fee73768d35671b4b7af13ffea043e27157e84206aa0aacf9e190f067ce6dbb8a66b57089d3488bc7b38af129b9e4d86e6678eab6484b03545c9ac0653741b9ad395c32293f5f07439fb797f7f1d015e56c03bfc3d256640041e72ba5ebb2ffdbfabb9301f444e45f41ee026cee2fb19c5d4d13429f4b5e28a356cc1a985068422d7667e28cfc6abe3668a9efa980033eb2657e70ab5281febb3b4a7fa52c1ab3cb4c7fd83a30a8a"))
 	req.Header.Set("decodefields", "familyId,parentFolderId,fileName,fileMd5,fileSize,sliceMd5,sliceSize,albumId,extend,lazyCheck,isLog")
 	req.Header.Set("accept", "application/json;charset=UTF-8")
 	req.Header.Set("cache-control", "no-cache")
