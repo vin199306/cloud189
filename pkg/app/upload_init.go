@@ -153,7 +153,7 @@ func (c *Upload) init(i pkg.Upload) (*uploadInfo, error) {
     }
 
     if upload.Data.UploadFileId == "" {
-        log.Println("Error getting upload fileid")
+        log.Printf("Failed to call initMultiUpload: %v", upload.Data)
         return nil, errors.New("error get upload fileid")
     }
 
