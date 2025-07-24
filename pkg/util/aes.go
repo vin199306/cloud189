@@ -25,7 +25,7 @@ func DecryptAES(key []byte, ct string) string {
 func AesDecrypt(key []byte, ciphertext string) []byte {
 	block, err := aes.NewCipher(key)
 	if err != nil {
-		return nil
+		return nil 
 	}
 	if block == nil {
 		return []byte{}
