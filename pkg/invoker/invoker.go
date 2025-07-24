@@ -102,6 +102,7 @@ func (i *Invoker) Get(path string, params url.Values, data any) error {
 }
 func (i *Invoker) Post(path string, params url.Values, data any) error {
 	url := i.url + path
+	log.Printf("url: %v",url)
 	req, err := http.NewRequest(http.MethodPost, url, strings.NewReader(params.Encode()))
 	if err != nil {
 		return err
