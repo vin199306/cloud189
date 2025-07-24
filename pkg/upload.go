@@ -38,6 +38,7 @@ type Uploader1 interface {
 type UploadConfig struct {
 	Num    uint32
 	Parten string
+	Family   bool // 新增 family 参数
 }
 
 func (c *UploadConfig) NewTask() *util.TaskPool {
