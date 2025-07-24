@@ -14,6 +14,7 @@ var upCfg pkg.UploadConfig
 func init() {
 	upCmd.Flags().Uint32VarP(&upCfg.Num, "parallel", "p", 5, "number of parallels for file upload")
 	upCmd.Flags().StringVarP(&upCfg.Parten, "name", "n", "", "filter filename regular expression")
+	upCmd.Flags().BoolVarP(&upCfg.Family, "family", "f", true, "upload to family") // 新增参数定义
 }
 
 var upCmd = &cobra.Command{

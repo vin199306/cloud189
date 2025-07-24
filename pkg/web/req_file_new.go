@@ -67,7 +67,7 @@ func (c *api) init(i pkg.UploadFile, parentId string) error {
 		params.Set("sliceMd5", i.SliceMD5())
 	}
 	var upload initResp
-	c.do("/person/initMultiUpload", params, &upload)
+	c.do("/family/initMultiUpload", params, &upload)
 	fileId := upload.Data.UploadFileId
 	if fileId == "" {
 		return errors.New("error get upload fileid")
@@ -82,7 +82,7 @@ func (client *api) check(i pkg.UploadFile, fileId string) error {
 	params.Set("fileMd5", i.FileMD5())
 	params.Set("sliceMd5", i.SliceMD5())
 	params.Set("uploadFileId", fileId)
-	err := client.do("/person/checkTransSecond", params, &upload)
+	err := client.do("/family/checkTransSecond", params, &upload)
 	if err != nil {
 		return err
 	}
@@ -111,7 +111,7 @@ func (client *api) UploadPart(part pkg.UploadPart, fileId string) error {
 	p.Set("uploadFileId", fileId)
 
 	var urlResp urlResp
-	if err := client.do("/person/getMultiUploadUrls", p, &urlResp); err != nil {
+	if err := client.do("/family/getMultiUploadUrls", p, &urlResp); err != nil {
 		return err
 	}
 	fmt.Printf("start uploading part %s\n", num)
@@ -163,7 +163,7 @@ func (client *api) commit(i pkg.UploadFile, fileId, lazyCheck string) error {
 	if i.Overwrite() {
 		params.Set("opertype", "3")
 	}
-	err := client.do("/person/commitMultiUploadFile", params, &result)
+	err := client.do("/family/commitMultiUploadFile", params, &result)
 	if err == nil {
 		cache.InvalidId(i.ParentId())
 	}

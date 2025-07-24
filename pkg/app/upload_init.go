@@ -136,7 +136,7 @@ func (c *Upload) init(i pkg.Upload) (*uploadInfo, error) {
 	}
 	params.Set("extend", `{"opScene":"1","relativepath":"","rootfolderid":""}`)
 	var upload initResp
-	if err := c.Get("/person/initMultiUpload", params, &upload); err != nil {
+	if err := c.Get("/family/initMultiUpload", params, &upload); err != nil {
 		return nil, err
 	}
 	if upload.Data.UploadFileId == "" {
@@ -191,7 +191,7 @@ func (client *Upload) getUploadUrl(fileId string, names []string) (*uploadUrlRes
 	p.Set("partInfo", strings.Join(names, ","))
 	p.Set("uploadFileId", fileId)
 	urlResp := new(uploadUrlResp)
-	return urlResp, client.Get("/person/getMultiUploadUrls", p, urlResp)
+	return urlResp, client.Get("/family/getMultiUploadUrls", p, urlResp)
 }
 
 type uploadResult struct {
@@ -221,5 +221,5 @@ func (client *Upload) commit(i pkg.Upload, fileId, lazyCheck string) error {
 	if i.Overwrite() {
 		params.Set("opertype", "3")
 	}
-	return client.Get("/person/commitMultiUploadFile", params, &result)
+	return client.Get("/family/commitMultiUploadFile", params, &result)
 }
