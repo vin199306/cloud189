@@ -140,7 +140,7 @@ func (c *Upload) init(i pkg.Upload) (*uploadInfo, error) {
 		return nil, err
 	}
 	if upload.Data.UploadFileId == "" {
-		return nil, errors.New("error get upload fileid")
+		return nil, errors.New("error get upload fileid-init")
 	}
 	return &upload.Data, nil
 }
