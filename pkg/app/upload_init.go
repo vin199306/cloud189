@@ -82,7 +82,7 @@ func (up *Upload) decrypt(encrypted string) string {
 		return "123"
 	}
 
-	return string(params)
+	return params.Encode()
 }
 
 func (up *Upload) do(req *http.Request, retry int, result any) error {
