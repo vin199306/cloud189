@@ -71,7 +71,7 @@ func (up *Upload) decrypt(encrypted string) url.Values{
 	}
 
 	// 2. 使用 AES 算法解密
-	decryptedData := util.AesDecrypt([]byte(up.session.Secret[0:16]), string(data))
+	decryptedData := util.AesDecrypt([]byte(up.session.Secret[0:16]), []byte(data))
 
 	// 3. 将解密后的字节切片转换为字符串
 	decryptedStr := string(decryptedData)

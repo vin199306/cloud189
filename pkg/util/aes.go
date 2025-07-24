@@ -22,7 +22,7 @@ func DecryptAES(key []byte, ct string) string {
 	return string(pt)
 }
 
-func AesDecrypt(key []byte, ciphertext string) []byte {
+func AesDecrypt(key , ciphertext []byte) []byte {
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil 
