@@ -121,7 +121,7 @@ func (r *initResp) GetCode() string {
 	return r.Code
 }
 
-const initMultiUploadURL = "/family/initMultiUpload"
+const initMultiUploadURL = "/person/initMultiUpload"
 
 func (c *Upload) init(i pkg.Upload) (*uploadInfo, error) {
     // 检查关键参数的有效性
