@@ -2,12 +2,14 @@ name: release
 
 on:
   push:
-    branches:
-      - main  # 可按需修改为你的主分支名
+    tags:
+      - '*'
 
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # 允许创建和更新版本发布
     steps:
       -
         name: Checkout
@@ -19,12 +21,6 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: 1.21
-      -
-        name: Create and Push Tag
-        run: |
-          NEW_TAG="v$(date +'%Y%m%d%H%M%S')"
-          git tag $NEW_TAG
-          git push origin $NEW_TAG
       -
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v5
