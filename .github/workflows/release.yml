@@ -21,6 +21,7 @@ jobs:
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v5
         with:
+          tag_name: yanwen
           distribution: goreleaser
           version: latest
           args: release --rm-dist
