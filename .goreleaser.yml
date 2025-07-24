@@ -19,6 +19,7 @@ builds:
       - arm
       - arm64
       - amd64
+      - mipsle  # 添加 mipsle 平台支持
     goarm:
       - 6
       - 7
