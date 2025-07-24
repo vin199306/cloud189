@@ -1,7 +1,9 @@
 name: release
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main  # 可按需修改为你的主分支名
 
 jobs:
   goreleaser:
@@ -18,10 +20,15 @@ jobs:
         with:
           go-version: 1.21
       -
+        name: Create and Push Tag
+        run: |
+          NEW_TAG="v$(date +'%Y%m%d%H%M%S')"
+          git tag $NEW_TAG
+          git push origin $NEW_TAG
+      -
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v5
         with:
-          tag_name: yanwen
           distribution: goreleaser
           version: latest
           args: release --rm-dist
