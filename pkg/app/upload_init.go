@@ -121,28 +121,43 @@ func (r *initResp) GetCode() string {
 	return r.Code
 }
 
-func (c *Upload) init(i pkg.Upload) (*uploadInfo, error) {
-	params := make(url.Values)
-	params.Set("parentFolderId", i.ParentId())
-	params.Set("fileName", i.Name())
-	params.Set("fileSize", strconv.FormatInt(i.Size(), 10))
-	params.Set("sliceSize", strconv.Itoa(file.Slice))
+const initMultiUploadURL = "/family/initMultiUpload"
 
-	if i.LazyCheck() {
-		params.Set("lazyCheck", "1")
-	} else {
-		params.Set("fileMd5", i.FileMD5())
-		params.Set("sliceMd5", i.SliceMD5())
-	}
-	params.Set("extend", `{"opScene":"1","relativepath":"","rootfolderid":""}`)
-	var upload initResp
-	if err := c.Get("/family/initMultiUpload", params, &upload); err != nil {
-		return nil, err
-	}
-	if upload.Data.UploadFileId == "" {
-		return nil, errors.New("error get upload fileid-init")
-	}
-	return &upload.Data, nil
+func (c *Upload) init(i pkg.Upload) (*uploadInfo, error) {
+    // 检查关键参数的有效性
+    if i.ParentId() == "" {
+        return nil, errors.New("parentFolderId is empty")
+    }
+    if i.Name() == "" {
+        return nil, errors.New("fileName is empty")
+    }
+
+    params := make(url.Values)
+    params.Set("parentFolderId", i.ParentId())
+    params.Set("fileName", i.Name())
+    params.Set("fileSize", strconv.FormatInt(i.Size(), 10))
+    params.Set("sliceSize", strconv.Itoa(file.Slice))
+
+    if i.LazyCheck() {
+        params.Set("lazyCheck", "1")
+    } else {
+        params.Set("fileMd5", i.FileMD5())
+        params.Set("sliceMd5", i.SliceMD5())
+    }
+    params.Set("extend", `{"opScene":"1","relativepath":"","rootfolderid":""}`)
+
+    var upload initResp
+    if err := c.Get(initMultiUploadURL, params, &upload); err != nil {
+        log.Printf("Failed to call initMultiUpload: %v", err)
+        return nil, err
+    }
+
+    if upload.Data.UploadFileId == "" {
+        log.Println("Error getting upload fileid")
+        return nil, errors.New("error get upload fileid")
+    }
+
+    return &upload.Data, nil
 }
 
 type uploadUrlResp struct {
