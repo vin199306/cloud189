@@ -15,7 +15,7 @@ builds:
     goarch:
       - mipsle  # 添加 mipsle 平台支持
     # 使用软浮点运算，MT7621 通常不支持硬件浮点
-    gomips: "softfloat"
+    gomips: ["softfloat"]  # 修改为字符串切片形式
 archives:
   - format_overrides:
       - goos: windows
