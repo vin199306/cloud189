@@ -58,7 +58,7 @@ func (client *Upload) Write(upload pkg.Upload) error {
 
 func (up *Upload) encrypt(f url.Values) string {
 	e := util.EncodeParam(f)
-	data := util.AesEncrypt([]byte(e), []byte(up.session.Secret[0:16]))
+	data := util.AesEncrypt([]byte(e), []byte("062F8E1529A61D66ECE686F4439A2238"[0:16]))
 	return hex.EncodeToString(data)
 }
 
