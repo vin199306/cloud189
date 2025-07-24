@@ -12,13 +12,7 @@ builds:
     binary: cloud189
     goos:
       - linux
-      - darwin
-      - windows
     goarch:
-      - 386
-      - arm
-      - arm64
-      - amd64
       - mipsle  # 添加 mipsle 平台支持
     goarm:
       - 6
