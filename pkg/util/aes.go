@@ -21,7 +21,8 @@ func DecryptAES(key []byte, ct string) string {
 	}
 	return string(pt)
 }
-func AesDecrypt(key []byte,ciphertext) []byte {
+
+func AesDecrypt(key []byte, ciphertext string) []byte {
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil
