@@ -26,7 +26,7 @@ var getCmd = &cobra.Command{
 			return
 		}
 		// 类型断言
-		if info, ok := info.(*FileInfo); ok {
+		if info, ok := info.(*file.FileInfo); ok {
 			fmt.Println(info.Info()) // 调用具体类型的方法
 		} else {
 			fmt.Println("无法转换为 FileInfo 类型")
