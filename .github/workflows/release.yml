@@ -23,7 +23,7 @@ jobs:
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v5
         with:
-          tag_name: ${{ date('YYYYMMDD-HHmmss') }}-${{ github.run_number }} 
+          tag_name: ${{ github.run_number }} 
           distribution: goreleaser
           version: latest
           args: release --rm-dist
