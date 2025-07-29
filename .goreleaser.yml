@@ -32,12 +32,6 @@ archives:
     format_overrides:
       - goos: windows
         format: zip
-    files:
-      - LICENSE
-      - README.md
-    replacements:
-      linux: Linux
-      mips: mips-softfloat
 
 checksum:
   name_template: 'checksums.txt'
