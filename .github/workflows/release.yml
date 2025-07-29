@@ -25,6 +25,8 @@ jobs:
         run: |
           DATE=$(date +%Y%m%d)
           TAG_NAME="v${DATE}"
+          git tag -d $TAG_NAME || true
+          git push origin :refs/tags/$TAG_NAME || true
           # 创建标签
           git tag $TAG_NAME
           # 推送标签到远程仓库
