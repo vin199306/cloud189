@@ -8,30 +8,38 @@ before:
     - go generate ./...
 builds:
   - main: ./cmd/cloud189
-    id: "cloud189"
-    binary: cloud189
-    env:
-      - CGO_ENABLED=0
+    id: "cloud189-mt7621"
+    binary: cloud189-mt7621
     goos:
       - linux
     goarch:
-      - mipsle
-    goarm:
-      - 5 # 对于mipsle架构，这里的值通常不重要，但可以设置为5
+      - mips
+    gomips: softfloat
+    env:
+      - CGO_ENABLED=0
     flags:
-      - -tags=netgo,softfloat # 添加 softfloat 标签
-      - -installsuffix=netgo
+      - -trimpath
+    asmflags:
+      - all=-trimpath={{.Env.GOPATH}}
+    gcflags:
+      - all=-trimpath={{.Env.GOPATH}}
     ldflags:
-      - -s -w
-      - -extldflags "-static"
+      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
+
 archives:
-  - format_overrides:
+  - name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}{{ if .Mips }}_{{ .Mips }}{{ end }}"
+    format: tar.gz
+    format_overrides:
       - goos: windows
         format: zip
     files:
       - LICENSE
       - README.md
-      - config.yaml
+      - config.example.yaml
+    replacements:
+      linux: Linux
+      mips: mips-softfloat
+
 checksum:
   name_template: 'checksums.txt'
 snapshot:
@@ -42,11 +50,7 @@ changelog:
     exclude:
       - '^docs:'
       - '^test:'
-      - '^chore:'
-      - '^ci:'
 release:
   github:
     owner: vin199306
     name: cloud189
-  draft: true
-  prerelease: auto
