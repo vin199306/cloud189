@@ -20,16 +20,15 @@ jobs:
         with:
           go-version: 1.21
 
-      - name: Generate tag
-        id: tag
+      -
+        name: Create and push tag
         run: |
-          git tag -d v1.0.1
-          git push origin :refs/tags/v1.0.1
-
-      - name: Create tag
-        run: |
-          git tag v1.0.2  # 这里的 v1.0.0 可以根据实际情况修改
-          git push origin v1.02
+          DATE=$(date +%Y%m%d)
+          TAG_NAME="v${DATE}"
+          # 创建标签
+          git tag $TAG_NAME
+          # 推送标签到远程仓库
+          git push origin $TAG_NAME
       -
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v5
