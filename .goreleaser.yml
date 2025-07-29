@@ -10,22 +10,20 @@ builds:
   - main: ./cmd/cloud189
     id: "cloud189"
     binary: cloud189
+    env:
+      - CGO_ENABLED=0
     goos:
       - linux
-      - darwin
-      - windows
     goarch:
-      - 386
-      - arm
-      - arm64
-      - amd64
+      - mipsle
     goarm:
-      - 6
-      - 7
-    ignore:
-      - goos: windows
-        goarch: arm
-
+      - 5 # 对于mipsle架构，这里的值通常不重要，但可以设置为5
+    flags:
+      - -tags=netgo,softfloat # 添加 softfloat 标签
+      - -installsuffix=netgo
+    ldflags:
+      - -s -w
+      - -extldflags "-static"
 archives:
   - format_overrides:
       - goos: windows
@@ -33,6 +31,7 @@ archives:
     files:
       - LICENSE
       - README.md
+      - config.yaml
 checksum:
   name_template: 'checksums.txt'
 snapshot:
@@ -43,9 +42,11 @@ changelog:
     exclude:
       - '^docs:'
       - '^test:'
+      - '^chore:'
+      - '^ci:'
 release:
-  # Repo in which the release will be created.
-  # Default is extracted from the origin remote URL or empty if its private hosted.
   github:
-    owner: gowsp
+    owner: vin199306
     name: cloud189
+  draft: true
+  prerelease: auto
