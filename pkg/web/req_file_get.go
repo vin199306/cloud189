@@ -44,12 +44,3 @@ func (f *fileInfo) ContentType(ctx context.Context) (string, error) {
 func (f *fileInfo) ETag(ctx context.Context) (string, error) {
 	return strconv.FormatInt(f.FileModTime, 10), nil
 }
-
-func (c *api) GetFileInfo(path string) (*fileInfo, error) {
-	var info fileInfo
-	err := c.invoker.Get("/getFileInfo.action", url.Values{"filePath": {path}}, &info)
-	if err != nil {
-		return nil, err
-	}
-	return &info, nil
-}
