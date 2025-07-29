@@ -22,12 +22,14 @@ jobs:
 
       - name: Generate tag
         id: tag
-        run: echo "TAG=v-$(date +%s)" >> $GITHUB_ENV
+        run: |
+          git tag -d v-1753777640
+          git push origin :refs/tags/v-1753777640
 
       - name: Create tag
         run: |
-          git tag ${{ env.TAG }}
-          git push origin ${{ env.TAG }}
+          git tag v1.0.0  # 这里的 v1.0.0 可以根据实际情况修改
+          git push origin v1.0.0
       -
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v5
