@@ -8,8 +8,8 @@ before:
     - go generate ./...
 builds:
   - main: ./cmd/cloud189
-    id: "cloud189-mt7621"
-    binary: cloud189-mt7621
+    id: "cloud189"
+    binary: cloud189
     goos:
       - linux
     goarch:

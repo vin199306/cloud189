@@ -26,7 +26,7 @@ var getCmd = &cobra.Command{
 		}
 		fmt.Println(info.Size())
 		fmt.Println(info.Name())
-		fmt.Println(info.Id())
-		fmt.Println(info.PId())
+		//fmt.Println(info.Id())
+		//fmt.Println(info.PId())
     },
 }
