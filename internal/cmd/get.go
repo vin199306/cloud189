@@ -24,9 +24,12 @@ var getCmd = &cobra.Command{
 		if err != nil {
 			return
 		}
-		fmt.Println(info.Size())
-		fmt.Println(info.Name())
-		//fmt.Println(info.Id())
-		//fmt.Println(info.PId())
+		// 使用反射打印所有方法
+        fmt.Println("=== 文件对象支持的方法 ===")
+        t := reflect.TypeOf(info)
+        for i := 0; i < t.NumMethod(); i++ {
+            method := t.Method(i)
+            fmt.Printf("%s: %s\n", method.Name, method.Type)
+        }
     },
 }
