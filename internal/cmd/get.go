@@ -12,7 +12,7 @@ var getCmd = &cobra.Command{
     Use:    "get {云盘路径}",
     PreRun: session.Parse,
     Short:  "获取云盘文件的详细信息",
-    Args:   ccobra.MinimumNArgs(2),
+    Args:   cobra.MinimumNArgs(2),
     Run: func(cmd *cobra.Command, args []string) {
         err := file.CheckPath(args...)
         if err != nil {
@@ -26,7 +26,7 @@ var getCmd = &cobra.Command{
 			return
 		}
 		// 使用反射调用指定方法
-		methodName := strings.Title(args[1])
+		methodName := args[1]
         value := reflect.ValueOf(info)
         method := value.MethodByName(methodName)
         
