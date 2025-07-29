@@ -5,8 +5,9 @@ import (
 
 	"github.com/gowsp/cloud189/internal/session"
 	"github.com/gowsp/cloud189/pkg/file"
-	"github.com/gowsp/cloud189/pkg/app"
 	"github.com/spf13/cobra"
+	"github.com/gowsp/cloud189/pkg/app"
+	"github.com/gowsp/cloud189/pkg/invoker"
 )
 
 var getCmd = &cobra.Command{
@@ -21,16 +22,12 @@ var getCmd = &cobra.Command{
             return
         }
         name := args[0]
-        client := App()
-        fileInfo, err := client.Stat(name)
-        if err != nil {
-            fmt.Println(err)
-            return
-        }
-        fmt.Printf("文件 ID: %s\n", fileInfo.Id())
-        fmt.Printf("文件名: %s\n", fileInfo.Name())
-        fmt.Printf("文件大小: %s\n", file.ReadableSize(uint64(fileInfo.Size())))
-        fmt.Printf("修改时间: %s\n", fileInfo.ModTime().Format("2006-01-02 15:04:05"))
-        fmt.Printf("是否为目录: %v\n", fileInfo.IsDir())
+        api := app.New(invoker.DefaultPath())
+		f := New(api)
+		info, err := f.Stat(name)
+		if err != nil {
+			return
+		}
+		fmt.Println(info)
     },
 }
