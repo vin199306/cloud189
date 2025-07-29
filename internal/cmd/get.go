@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"reflect" 
+
 	"github.com/gowsp/cloud189/internal/session"
 	"github.com/gowsp/cloud189/pkg/file"
 	"github.com/spf13/cobra"
@@ -21,10 +21,10 @@ var getCmd = &cobra.Command{
         }
         name := args[0]
 		
-		info, err := App().Stat(name).Info()
+		info, err := App().Stat(name)
 		if err != nil {
 			return
 		}
-		fmt.Println(info.FileSize)			
+		fmt.Println(info.Info().FileSize)			
     },
 }
