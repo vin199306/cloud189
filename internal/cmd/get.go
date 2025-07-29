@@ -14,11 +14,11 @@ var getCmd = &cobra.Command{
     Short:  "获取云盘文件的详细信息",
     Args:   cobra.MinimumNArgs(2),
     Run: func(cmd *cobra.Command, args []string) {
-        err := file.CheckPath(args...)
-        if err != nil {
-            fmt.Println(err)
-            return
-        }
+        // err := file.CheckPath(args...)
+        // if err != nil {
+        //     fmt.Println(err)
+        //     return
+        // }
         name := args[0]
 		
 		info, err := App().Stat(name)
