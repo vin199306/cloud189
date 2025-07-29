@@ -5,7 +5,6 @@ import (
 
 	"github.com/gowsp/cloud189/internal/session"
 	"github.com/gowsp/cloud189/pkg/file"
-	"github.com/gowsp/cloud189/pkg/web/fileInfo"
 	"github.com/spf13/cobra"
 )
 
@@ -27,10 +26,10 @@ var getCmd = &cobra.Command{
 			return
 		}
 		// 类型断言
-		if info, ok := info.(*fileInfo); ok {
+		if info, ok := info.(*FileInfo); ok {
 			fmt.Println(info.Info()) // 调用具体类型的方法
 		} else {
-			fmt.Println("无法转换为 fileInfo 类型")
+			fmt.Println("无法转换为 FileInfo 类型")
 		}
 		//fmt.Println(info.Info().FileSize)			
     },
