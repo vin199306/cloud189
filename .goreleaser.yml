@@ -14,7 +14,7 @@ builds:
       - linux
     goarch:
       - mipsle
-    gomips: "softfloat"
+    gomips: [softfloat]
     env:
       - CGO_ENABLED=0
     flags:
