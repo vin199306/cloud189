@@ -23,7 +23,7 @@ jobs:
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v5
         with:
-          tag:${date:format='%Y%m%d%H%M%S'}
+          tag: "v212"    
           distribution: goreleaser
           version: latest
           args: release --rm-dist
