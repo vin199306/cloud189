@@ -72,3 +72,7 @@ func (f *fileInfo) Type() fs.FileMode  { return fs.ModeType }
 func (f *fileInfo) ModTime() time.Time { return time.Time(f.LastOpTime) }
 func (f *fileInfo) IsDir() bool        { return false }
 func (f *fileInfo) Sys() any           { return nil }
+
+func (f *fileInfo) MD5() string {
+	return f.Md5
+}

@@ -12,12 +12,17 @@ import (
 
 func (client *FS) UploadFrom(file pkg.Upload) error {
 	uploader := client.api.Uploader()
-	return uploader.Write(file)
+	_, err := uploader.Write(file)
+	return err
 }
-func (client *FS) Upload(cfg pkg.UploadConfig, cloud string, locals ...string) error {
+func (client *FS) Upload(cfg pkg.UploadConfig, cloud string, locals ...string) map[string]string {
 	err := cfg.Check()
+	results := make(map[string]string)
 	if err != nil {
-		return err
+		for _, local := range locals {
+			results[local] = err.Error()
+		}
+		return results
 	}
 	dir, err := client.stat(cloud)
 	if len(locals) > 1 || os.IsNotExist(err) {
@@ -25,35 +30,43 @@ func (client *FS) Upload(cfg pkg.UploadConfig, cloud string, locals ...string) e
 		dir, _ = client.stat(cloud)
 	}
 	up := make([]pkg.Upload, 0)
+	localMap := make(map[pkg.Upload]string) // 记录upload对象和本地路径的映射
 	for _, local := range locals {
 		if file.IsNetFile(local) {
-			up = append(up, file.NewURLFile(dir.Id(), local))
+			u := file.NewURLFile(dir.Id(), local)
+			up = append(up, u)
+			localMap[u] = local
 			continue
 		}
 		if file.IsFastFile(local) {
-			// u := file.NewFastFile(dir.Id(), local)
-			// up = append(up, u)
 			continue
 		}
 		files, err := client.uploadLocal(dir, local, cfg.Parten)
 		if err != nil {
-			log.Println(err)
+			results[local] = err.Error()
 			continue
 		}
-		up = append(up, files...)
+		for _, u := range files {
+			up = append(up, u)
+			localMap[u] = local
+		}
 	}
 	task := cfg.NewTask()
 	uploader := client.api.Uploader()
 	for _, v := range up {
 		r := v
 		task.Run(func() {
-			if err = uploader.Write(r); err != nil {
-				log.Println(err)
+			result, err := uploader.Write(r)
+			if err != nil {
+				results[localMap[r]] = err.Error()
+			} else {
+				results[localMap[r]] = result
 			}
+
 		})
 	}
 	task.Close()
-	return nil
+	return results
 }
 
 func (client *FS) uploadLocal(parent pkg.File, local string, parten string) ([]pkg.Upload, error) {

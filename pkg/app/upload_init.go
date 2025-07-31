@@ -29,13 +29,17 @@ func (client *api) Uploader() pkg.ReadWriter {
 	client.invoker.Get("/keepUserSession.action", nil, "")
 	return &Upload{session: client.conf.Session, invoker: client.invoker}
 }
-func (client *Upload) Write(upload pkg.Upload) error {
+func (client *Upload) Write(upload pkg.Upload) (string, error) {
 	data, err := client.init(upload)
 	if err != nil {
-		return err
+		return "error", err
 	}
 	if data.IsExists() {
-		return client.commit(upload, data.UploadFileId, "0")
+		uploadResult, err := client.commit(upload, data.UploadFileId, "0")
+		if uploadResult.File.Id != "" {
+			return "exist", err
+		}
+		return "error", err
 	}
 	count := upload.SliceNum()
 	parts := make([]pkg.UploadPart, count)
@@ -47,13 +51,17 @@ func (client *Upload) Write(upload pkg.Upload) error {
 	}
 	rsp, err := client.getUploadUrl(data.UploadFileId, names)
 	if err != nil {
-		return err
+		return "error", err
 	}
 	err = rsp.upload(upload, parts)
 	if err != nil {
-		return err
+		return "error", err
 	}
-	return client.commit(upload, data.UploadFileId, "1")
+	uploadResult, err := client.commit(upload, data.UploadFileId, strconv.Itoa(upload.SliceNum()))
+	if uploadResult.File.Id != "" {
+		return "completed", err
+	}
+	return "error", err
 }
 
 func (up *Upload) encrypt(f url.Values) string {
@@ -136,7 +144,7 @@ func (c *Upload) init(i pkg.Upload) (*uploadInfo, error) {
 	}
 	params.Set("extend", `{"opScene":"1","relativepath":"","rootfolderid":""}`)
 	var upload initResp
-	if err := c.Get("/person/initMultiUpload", params, &upload); err != nil {
+	if err := c.Get(apiPath("/person/initMultiUpload"), params, &upload); err != nil {
 		return nil, err
 	}
 	if upload.Data.UploadFileId == "" {
@@ -168,7 +176,7 @@ func (rsp *uploadUrlResp) upload(info pkg.Upload, parts []pkg.UploadPart) error 
 			req.Header.Set(v[0:i], v[i+1:])
 		}
 		if print {
-			log.Println("upload part", num)
+			log.Println("upload part", num, "/", len(parts))
 		}
 		resp, err := http.DefaultClient.Do(req)
 		if err != nil {
@@ -191,17 +199,17 @@ func (client *Upload) getUploadUrl(fileId string, names []string) (*uploadUrlRes
 	p.Set("partInfo", strings.Join(names, ","))
 	p.Set("uploadFileId", fileId)
 	urlResp := new(uploadUrlResp)
-	return urlResp, client.Get("/person/getMultiUploadUrls", p, urlResp)
+	return urlResp, client.Get(apiPath("/person/getMultiUploadUrls"), p, urlResp)
 }
 
 type uploadResult struct {
 	Code string `json:"code,omitempty"`
 	File struct {
 		Id         string `json:"userFileId,omitempty"`
-		FileSize   int64  `json:"file_size,omitempty"`
-		FileName   string `json:"file_name,omitempty"`
-		FileMd5    string `json:"file_md_5,omitempty"`
-		CreateDate string `json:"create_date,omitempty"`
+		FileSize   int64  `json:"fileSize,omitempty"`
+		FileName   string `json:"fileName,omitempty"`
+		FileMd5    string `json:"fileMd5,omitempty"`
+		CreateDate string `json:"createDate,omitempty"`
 	} `json:"file,omitempty"`
 }
 
@@ -209,7 +217,7 @@ func (r *uploadResult) GetCode() string {
 	return r.Code
 }
 
-func (client *Upload) commit(i pkg.Upload, fileId, lazyCheck string) error {
+func (client *Upload) commit(i pkg.Upload, fileId, lazyCheck string) (uploadResult, error) {
 	var result uploadResult
 	params := make(url.Values)
 	if lazyCheck == "1" {
@@ -221,5 +229,16 @@ func (client *Upload) commit(i pkg.Upload, fileId, lazyCheck string) error {
 	if i.Overwrite() {
 		params.Set("opertype", "3")
 	}
-	return client.Get("/person/commitMultiUploadFile", params, &result)
+	err := client.Get(apiPath("/person/commitMultiUploadFile"), params, &result)
+	// 打印服务器返回的详细信息
+	fmt.Printf("userFileId: %s\n", result.File.Id)
+	fmt.Printf("fileSize: %d\n", result.File.FileSize)
+	return result, err
+}
+
+func apiPath(path string) string {
+	// if cmd.UseFamilyCloud() {
+	// 	return "/family" + path[len("/person"):]
+	// }
+	return path
 }
