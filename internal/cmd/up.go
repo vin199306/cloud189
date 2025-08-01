@@ -38,6 +38,7 @@ var upCmd = &cobra.Command{
 				for _, f := range locals {
 					if err[f] == "exist" || err[f] == "completed" {
 						err := os.RemoveAll(f)
+						fmt.Printf("file: %s", err[f])	
 						if err != nil {
 							fmt.Printf("删除本地文件失败: %s, 错误: %v\n", f, err)
 						} else {
