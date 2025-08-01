@@ -189,6 +189,11 @@ func (rsp *uploadUrlResp) upload(info pkg.Upload, parts []pkg.UploadPart) error 
 		   }
 		   resp, err := defaultHTTPClient.Do(req)
 		   if err != nil {
+			   if os.IsTimeout(err) || strings.Contains(err.Error(), "timeout") {
+				   log.Printf("分片 %s 上传超时: %v", num, err)
+			   } else {
+				   log.Printf("分片 %s 上传失败: %v", num, err)
+			   }
 			   lastErr = fmt.Errorf("upload part %s error: %v", num, err)
 			   time.Sleep(time.Second * time.Duration(attempt))
 			   continue
