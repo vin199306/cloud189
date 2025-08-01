@@ -36,7 +36,7 @@ func (client *Upload) Write(upload pkg.Upload) (string, error) {
 	}
 	if data.IsExists() {
 		uploadResult, err := client.commit(upload, data.UploadFileId, "0")
-		if uploadResult.File.Id.len() > 16 {
+		if len(uploadResult.File.Id) > 16 {
 			return "exist", err
 		}
 		return "error", err
@@ -58,7 +58,7 @@ func (client *Upload) Write(upload pkg.Upload) (string, error) {
 		return "error", err
 	}
 	uploadResult, err := client.commit(upload, data.UploadFileId, strconv.Itoa(upload.SliceNum()))
-	if uploadResult.File.Id.len() > 16 {
+	if len(uploadResult.File.Id) > 16 {
 		return "completed", err
 	}
 	return "error", err
