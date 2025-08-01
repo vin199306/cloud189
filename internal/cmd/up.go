@@ -33,21 +33,23 @@ var upCmd = &cobra.Command{
 		}
 		locals := args[:length-1]
 
-		if err := App().Upload(upCfg, cloud, locals...); err != nil {
-			if mvAfterUpload {
-				for _, f := range locals {
-					if err[f] == "exist" || err[f] == "completed" {
-						err := os.RemoveAll(f)
-						fmt.Printf("file: %s", err[f])	
-						if err != nil {
-							fmt.Printf("删除本地文件失败: %s, 错误: %v\n", f, err)
-						} else {
-							fmt.Printf("已删除本地文件: %s\n", f)
-						}
+		results := App().Upload(upCfg, cloud, locals...)
+		if len(results) == 0 {
+			fmt.Println("没有需要上传的文件")
+			return	
+		}
+		if mvAfterUpload {
+			for _, f := range locals {
+				if results[f] == "exist" || results[f] == "completed" {
+					err := os.RemoveAll(f)
+					if err != nil {
+						fmt.Printf("删除本地文件失败: %s, 错误: %v\n", f, err)
+					} else {
+						fmt.Printf("已删除本地文件: %s\n", f)
 					}
-
 				}
 			}
+		}
 		}
 	},
 }

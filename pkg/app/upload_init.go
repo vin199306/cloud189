@@ -36,10 +36,12 @@ func (client *Upload) Write(upload pkg.Upload) (string, error) {
 	}
 	if data.IsExists() {
 		uploadResult, err := client.commit(upload, data.UploadFileId, "0")
+		if err != nil {
+			return "error", err
+		}
 		if len(uploadResult.File.Id) > 16 {
 			return "exist", err
 		}
-		return "error", err
 	}
 	count := upload.SliceNum()
 	parts := make([]pkg.UploadPart, count)
@@ -58,6 +60,9 @@ func (client *Upload) Write(upload pkg.Upload) (string, error) {
 		return "error", err
 	}
 	uploadResult, err := client.commit(upload, data.UploadFileId, strconv.Itoa(upload.SliceNum()))
+	if err != nil {
+		return "error", err
+	}
 	if len(uploadResult.File.Id) > 16 {
 		return "completed", err
 	}
