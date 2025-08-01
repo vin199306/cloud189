@@ -50,6 +50,6 @@ var upCmd = &cobra.Command{
 				}
 			}
 		}
-		}
+	
 	},
 }
