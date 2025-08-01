@@ -159,6 +159,7 @@ func (c *Upload) init(i pkg.Upload) (*uploadInfo, error) {
 }
 
 type uploadUrlResp struct {
+var defaultHTTPClient = &http.Client{Timeout: 60 * time.Second}
 	Code string `json:"code,omitempty"`
 	Data map[string]struct {
 		RequestURL    string `json:"requestURL,omitempty"`
@@ -171,28 +172,41 @@ func (rsp *uploadUrlResp) upload(info pkg.Upload, parts []pkg.UploadPart) error 
 	if print {
 		log.Println("start upload", info.Name())
 	}
-	for _, part := range parts {
-		num := strconv.Itoa(part.Num() + 1)
-		upload := rsp.Data["partNumber_"+num]
-		req, _ := http.NewRequest(http.MethodPut, upload.RequestURL, part.Data())
-		headers := strings.Split(upload.RequestHeader, "&")
-		for _, v := range headers {
-			i := strings.Index(v, "=")
-			req.Header.Set(v[0:i], v[i+1:])
-		}
-		if print {
-			log.Println("upload part", num, "/", len(parts))
-		}
-		resp, err := http.DefaultClient.Do(req)
-		if err != nil {
-			return err
-		}
-		resp.Body.Close()
-		if resp.StatusCode != 200 {
-			data, _ := io.ReadAll(resp.Body)
-			return fmt.Errorf("upload error %s", string(data))
-		}
-	}
+   maxRetry := 3
+   for _, part := range parts {
+	   num := strconv.Itoa(part.Num() + 1)
+	   upload := rsp.Data["partNumber_"+num]
+	   var lastErr error
+	   for attempt := 1; attempt <= maxRetry; attempt++ {
+		   req, _ := http.NewRequest(http.MethodPut, upload.RequestURL, part.Data())
+		   headers := strings.Split(upload.RequestHeader, "&")
+		   for _, v := range headers {
+			   i := strings.Index(v, "=")
+			   req.Header.Set(v[0:i], v[i+1:])
+		   }
+		   if print {
+			   log.Printf("upload part %s/%d, attempt %d", num, len(parts), attempt)
+		   }
+		   resp, err := defaultHTTPClient.Do(req)
+		   if err != nil {
+			   lastErr = fmt.Errorf("upload part %s error: %v", num, err)
+			   time.Sleep(time.Second * time.Duration(attempt))
+			   continue
+		   }
+		   defer resp.Body.Close()
+		   if resp.StatusCode != 200 {
+			   data, _ := io.ReadAll(resp.Body)
+			   lastErr = fmt.Errorf("upload error %s", string(data))
+			   time.Sleep(time.Second * time.Duration(attempt))
+			   continue
+		   }
+		   lastErr = nil
+		   break
+	   }
+	   if lastErr != nil {
+		   return lastErr
+	   }
+   }
 	if print {
 		log.Println("upload", info.Name(), "completed")
 	}
