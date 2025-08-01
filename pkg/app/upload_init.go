@@ -158,13 +158,14 @@ func (c *Upload) init(i pkg.Upload) (*uploadInfo, error) {
 	return &upload.Data, nil
 }
 
-type uploadUrlResp struct {
 var defaultHTTPClient = &http.Client{Timeout: 60 * time.Second}
-	Code string `json:"code,omitempty"`
-	Data map[string]struct {
-		RequestURL    string `json:"requestURL,omitempty"`
-		RequestHeader string `json:"requestHeader,omitempty"`
-	} `json:"uploadUrls,omitempty"`
+
+type uploadUrlResp struct {
+   Code string `json:"code,omitempty"`
+   Data map[string]struct {
+	   RequestURL    string `json:"requestURL,omitempty"`
+	   RequestHeader string `json:"requestHeader,omitempty"`
+   } `json:"uploadUrls,omitempty"`
 }
 
 func (rsp *uploadUrlResp) upload(info pkg.Upload, parts []pkg.UploadPart) error {
