@@ -19,6 +19,17 @@ builds:
       - CGO_ENABLED=0
     ldflags:
       - -s -w
+  - main: ./cmd/cloud189
+    id: "cloud189-mt7981"
+    binary: cloud189-mt7981
+    goos:
+      - linux
+    goarch:
+      - arm64
+    env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -s -w
 
 archives:
   - name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}{{ if .Mips }}_{{ .Mips }}{{ end }}"
